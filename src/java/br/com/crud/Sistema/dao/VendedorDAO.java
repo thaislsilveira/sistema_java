@@ -5,7 +5,7 @@
  */
 package br.com.crud.Sistema.dao;
 
-import br.com.crudSistema.model.Fornecedor;
+import br.com.crudSistema.model.Vendedor;
 import br.com.crudSistema.utils.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,11 +18,11 @@ import java.util.List;
  *
  * @author Thais Silveira
  */
-public class FornecedorDAO implements GenericDAO{
+public class VendedorDAO implements GenericDAO{
 
-     private Connection conexao;
+       private Connection conexao;
     
-    public FornecedorDAO() throws Exception{
+    public VendedorDAO() throws Exception{
         try{
             this.conexao = ConnectionFactory.getConnection();
             System.out.println("Conectado com sucesso");
@@ -33,37 +33,37 @@ public class FornecedorDAO implements GenericDAO{
 
     @Override
     public Boolean cadastrar(Object objeto) {
-      Fornecedor oFornecedor = (Fornecedor) objeto;
+      Vendedor oVendedor = (Vendedor) objeto;
       Boolean retorno = false;
-      if(oFornecedor.getIdFornecedor()==0){
-          retorno = this.inserir(oFornecedor);
+      if(oVendedor.getIdVendedor()==0){
+          retorno = this.inserir(oVendedor);
       }
       else{
-          retorno = this.alterar(oFornecedor);
+          retorno = this.alterar(oVendedor);
       }
       return retorno;
     }
 
     @Override
     public Boolean inserir(Object objeto) {
-      Fornecedor oFornecedor = (Fornecedor) objeto;
+      Vendedor oVendedor = (Vendedor) objeto;
       PreparedStatement stmt = null;
-      String sql = "Insert into fornecedor (nomefornecedor, rg, cpf, sexo, endereco, idcidade) values (?,?,?,?,?,?)";
+      String sql = "Insert into vendedor (nomevendedor, rg, cpf, sexo, endereco, idcidade) values (?,?,?,?,?,?)";
       try{
           stmt = conexao.prepareStatement(sql);
-          stmt.setString(1, oFornecedor.getNomeFornecedor());
-          stmt.setString(2, oFornecedor.getRg());
-          stmt.setString(3,oFornecedor.getCpf());
-          stmt.setString(4, oFornecedor.getSexo());
-          stmt.setString(5, oFornecedor.getEndereco());
-          stmt.setInt(6, oFornecedor.getCidade().getIdCidade()); 
+          stmt.setString(1, oVendedor.getNomeVendedor());
+          stmt.setString(2, oVendedor.getRg());
+          stmt.setString(3,oVendedor.getCpf());
+          stmt.setString(4, oVendedor.getSexo());
+          stmt.setString(5, oVendedor.getEndereco());
+          stmt.setInt(6, oVendedor.getCidade().getIdCidade()); 
           
           stmt.execute();
           return true;
       }
       catch(Exception ex)
       {
-          System.out.println("Problemas ao cadastrar fornecedor! Erro:" +ex.getMessage());
+          System.out.println("Problemas ao cadastrar vendedor! Erro:" +ex.getMessage());
           return false;
       }finally{
           try{
@@ -76,24 +76,24 @@ public class FornecedorDAO implements GenericDAO{
 
     @Override
     public Boolean alterar(Object objeto) {
-        Fornecedor oFornecedor = (Fornecedor) objeto;
+       Vendedor oVendedor = (Vendedor) objeto;
        PreparedStatement stmt = null;
-       String sql = "update fornecedor set nomefornecedor=?, rg=?, cpf=?, sexo=?, endereco=?,idcidade=? where idfornecedor=?";
+       String sql = "update vendedor set nomevendedor=?, rg=?, cpf=?, sexo=?, endereco=?,idcidade=? where idvendedor=?";
        try{
            stmt = conexao.prepareStatement(sql);
-           stmt.setString(1,oFornecedor.getNomeFornecedor());
-           stmt.setString(2, oFornecedor.getRg());
-           stmt.setString(3,oFornecedor.getCpf());
-           stmt.setString(4, oFornecedor.getSexo());
-           stmt.setString(5,oFornecedor.getEndereco());
-           stmt.setInt(6, oFornecedor.getCidade().getIdCidade());
-           stmt.setInt(7,oFornecedor.getIdFornecedor());       
+           stmt.setString(1,oVendedor.getNomeVendedor());
+           stmt.setString(2, oVendedor.getRg());
+           stmt.setString(3,oVendedor.getCpf());
+           stmt.setString(4, oVendedor.getSexo());
+           stmt.setString(5,oVendedor.getEndereco());
+           stmt.setInt(6, oVendedor.getCidade().getIdCidade());
+           stmt.setInt(7,oVendedor.getIdVendedor());       
            
            stmt.execute();
            return true;
        }
        catch(Exception ex){
-           System.out.println("Problemas ao alterar fornecedor! Erro: " +ex.getMessage());
+           System.out.println("Problemas ao alterar vendedor! Erro: " +ex.getMessage());
            return false;
        }
        finally
@@ -108,17 +108,17 @@ public class FornecedorDAO implements GenericDAO{
 
     @Override
     public Boolean excluir(int numero) {
-       int idFornecedor = numero;
+       int idVendedor = numero;
        PreparedStatement stmt = null;
-       String sql = "delete from fornecedor where idfornecedor=?";
+       String sql = "delete from vendedor where idvendedor=?";
        try{
            stmt = conexao.prepareStatement(sql);
-           stmt.setInt(1, idFornecedor);
+           stmt.setInt(1, idVendedor);
            stmt.execute();
            return true;
        }
        catch(Exception ex){
-           System.out.println("Problemas ao excluir fornecedor! Erro: " +ex.getMessage());
+           System.out.println("Problemas ao excluir vendedor! Erro: " +ex.getMessage());
            return false;
        }
        finally{
@@ -132,29 +132,29 @@ public class FornecedorDAO implements GenericDAO{
 
     @Override
     public Object carregar(int numero) {
-        int idFornecedor = numero;
+       int idVendedor = numero;
        PreparedStatement stmt = null;
        ResultSet rs = null;
-       Fornecedor oFornecedor = null;
-       String sql = "select f.*, c.* from fornecedor f inner join cidade c on f.idcidade = c.idcidade where f.idfornecedor = ?";
+       Vendedor oVendedor = null;
+       String sql = "select v.*, c.* from vendedor v inner join cidade c on v.idcidade = c.idcidade where v.idvendedor= ?";
        try{
            stmt=conexao.prepareStatement(sql);
-           stmt.setInt(1, idFornecedor);
+           stmt.setInt(1, idVendedor);
            rs=stmt.executeQuery();
            while(rs.next()){
-               oFornecedor = new Fornecedor();
-               oFornecedor.setIdFornecedor(rs.getInt("idFornecedor"));
-               oFornecedor.setNomeFornecedor(rs.getString("nomeFornecedor"));
-               oFornecedor.setRg(rs.getString("rg"));
-               oFornecedor.setCpf(rs.getString("cpf"));
-               oFornecedor.setSexo(rs.getString("sexo"));
-               oFornecedor.setEndereco(rs.getString("endereco"));
-               oFornecedor.getCidade().setNomeCidade(rs.getString("nomeCidade"));
+               oVendedor = new Vendedor();
+               oVendedor.setIdVendedor(rs.getInt("idVendedor"));
+               oVendedor.setNomeVendedor(rs.getString("nomeVendedor"));
+               oVendedor.setRg(rs.getString("rg"));
+               oVendedor.setCpf(rs.getString("cpf"));
+               oVendedor.setSexo(rs.getString("sexo"));
+               oVendedor.setEndereco(rs.getString("endereco"));
+               oVendedor.getCidade().setNomeCidade(rs.getString("nomeCidade"));
            }
-           return oFornecedor;
+           return oVendedor;
        }
        catch(SQLException ex){
-           System.out.println("Problemas ao carregar fornecedor!" + "Erro: " +ex.getMessage());
+           System.out.println("Problemas ao carregar vendedor!" + "Erro: " +ex.getMessage());
            return null;
        }finally{
            try{
@@ -167,28 +167,28 @@ public class FornecedorDAO implements GenericDAO{
 
     @Override
     public List<Object> Listar() {
-        List <Object> resultado = new ArrayList<>();
+      List <Object> resultado = new ArrayList<>();
         PreparedStatement stmt = null;
         ResultSet rs = null;
         
-        String sql = "select f.*, c.* from fornecedor f inner join cidade c on f.idcidade = c.idcidade where f.idfornecedor = ?";
+        String sql = "select v.*, c.* from vendedor v inner join cidade c on v.idcidade = c.idcidade where v.idvendedor=?";
         try{
             stmt = conexao.prepareStatement(sql);
             rs = stmt.executeQuery();
             while(rs.next()){
-               Fornecedor oFornecedor = new Fornecedor();
-               oFornecedor.setIdFornecedor(rs.getInt("idFornecedor"));
-               oFornecedor.setNomeFornecedor(rs.getString("nomeFornecedor"));
-               oFornecedor.setRg(rs.getString("rg"));
-               oFornecedor.setCpf(rs.getString("cpf"));
-               oFornecedor.setSexo(rs.getString("sexo"));
-               oFornecedor.setEndereco(rs.getString("endereco"));
-               oFornecedor.getCidade().setIdCidade(rs.getInt("idCidade"));
-               oFornecedor.getCidade().setNomeCidade(rs.getString("nomeCidade"));
-               resultado.add(oFornecedor);
+               Vendedor oVendedor = new Vendedor();
+               oVendedor.setIdVendedor(rs.getInt("idVendedor"));
+               oVendedor.setNomeVendedor(rs.getString("nomeVendedor"));
+               oVendedor.setRg(rs.getString("rg"));
+               oVendedor.setCpf(rs.getString("cpf"));
+               oVendedor.setSexo(rs.getString("sexo"));
+               oVendedor.setEndereco(rs.getString("endereco"));
+               oVendedor.getCidade().setIdCidade(rs.getInt("idCidade"));
+               oVendedor.getCidade().setNomeCidade(rs.getString("nomeCidade"));
+               resultado.add(oVendedor);
             }
         }catch(SQLException ex){
-            System.out.println("Problemas ao listar fornecedor! Erro: " +ex.getMessage());
+            System.out.println("Problemas ao listar vendedor! Erro: " +ex.getMessage());
         }finally{
             try{
                 ConnectionFactory.closeConnection(conexao, stmt,rs);
@@ -198,5 +198,6 @@ public class FornecedorDAO implements GenericDAO{
             }
         }
         return resultado;
-    }        
+    
+    }
 }
